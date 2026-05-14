@@ -82,6 +82,11 @@ textarea {
   align-items: start;
 }
 
+#studentView.question-mode,
+#studentView.result-mode {
+  grid-template-columns: 1fr;
+}
+
 .nickname-bar {
   grid-column: 1 / -1;
   display: grid;
@@ -110,6 +115,10 @@ textarea {
   display: flex;
   flex-direction: column;
   justify-content: center;
+}
+
+.question-mode .stage {
+  grid-column: 1 / -1;
 }
 
 .eyebrow {
@@ -234,13 +243,17 @@ textarea:focus {
 }
 
 .submitted {
-  display: grid;
-  gap: 4px;
-  width: min(460px, 100%);
-  margin-top: 28px;
-  border-left: 5px solid #1f6f68;
-  background: #fffdf8;
-  padding: 18px;
+  position: fixed;
+  top: 78px;
+  right: clamp(14px, 3vw, 34px);
+  z-index: 20;
+  border: 1px solid #b9d7cf;
+  border-radius: 999px;
+  background: #eef8f4;
+  color: #1f6f68;
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  font-weight: 900;
 }
 
 .results-panel,
@@ -260,6 +273,68 @@ textarea:focus {
   grid-column: 1 / -1;
   position: static;
   min-height: calc(100vh - 164px);
+}
+
+.result-mode .results-panel {
+  border: 0;
+  background: transparent;
+  padding: clamp(10px, 3vw, 28px) 0;
+}
+
+.result-mode .panel-head {
+  margin-bottom: clamp(18px, 4vw, 42px);
+}
+
+.result-mode .panel-head span {
+  font-size: 1rem;
+}
+
+.result-mode .panel-head strong {
+  font-size: clamp(2rem, 6vw, 5rem);
+}
+
+.result-mode .bar-label {
+  font-size: clamp(1.2rem, 3vw, 2.2rem);
+}
+
+.result-mode .bar-track {
+  height: clamp(24px, 4vw, 44px);
+}
+
+.result-mode .word {
+  font-size: calc(var(--size) * 1.4);
+}
+
+.result-mode .race-row {
+  grid-template-columns: 64px 1fr auto;
+  font-size: clamp(1rem, 2.5vw, 1.8rem);
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  background: rgba(21, 21, 21, 0.42);
+  padding: 22px;
+}
+
+.modal-box {
+  width: min(420px, 100%);
+  display: grid;
+  gap: 16px;
+  border: 1px solid #ded7cc;
+  border-radius: 8px;
+  background: #fffaf2;
+  padding: 24px;
+  box-shadow: 0 24px 80px rgba(21, 21, 21, 0.22);
+}
+
+.modal-box h2 {
+  margin: 0;
+  font-size: 1.55rem;
+  letter-spacing: 0;
 }
 
 .panel-head {

@@ -70,6 +70,9 @@ const elements = {
   optionsInput: $("#optionsInput"),
   adminResponseCount: $("#adminResponseCount"),
   adminResults: $("#adminResults"),
+  nicknameModal: $("#nicknameModal"),
+  nicknameForm: $("#nicknameForm"),
+  modalNicknameInput: $("#modalNicknameInput"),
 };
 
 let currentQuestion = null;
@@ -79,6 +82,8 @@ function route() {
   const admin = location.hash === "#/admin";
   elements.studentView.classList.toggle("hidden", admin);
   elements.adminView.classList.toggle("hidden", !admin);
+  if (admin) hideNicknameModal();
+  renderStudentQuestion();
 }
 
 function normalize(text) {
@@ -120,15 +125,29 @@ function syncNicknameInputs(value = getSavedNickname()) {
   if (document.activeElement !== elements.nicknameInput) {
     elements.nicknameInput.value = value;
   }
+  if (document.activeElement !== elements.modalNicknameInput) {
+    elements.modalNicknameInput.value = value;
+  }
+}
+
+function showNicknameModal() {
+  syncNicknameInputs();
+  elements.nicknameModal.classList.remove("hidden");
+  requestAnimationFrame(() => elements.modalNicknameInput.focus());
+}
+
+function hideNicknameModal() {
+  elements.nicknameModal.classList.add("hidden");
 }
 
 function renderStudentQuestion() {
   const question = currentQuestion;
   const hasQuestion = Boolean(question?.text);
   const submitted = hasSubmitted();
-  const needsNickname = question?.type === "race";
+  const savedNickname = getSavedNickname();
+  const isStudentRoute = location.hash !== "#/admin";
 
-  syncNicknameInputs();
+  syncNicknameInputs(savedNickname);
 
   elements.studentQuestion.textContent = hasQuestion ? question.text : "아직 열린 질문이 없습니다";
   elements.studentHint.textContent = hasQuestion
@@ -137,14 +156,22 @@ function renderStudentQuestion() {
       : "한 번 제출하면 질문이 바뀔 때까지 다시 제출할 수 없습니다."
     : "관리자가 질문을 열면 바로 참여할 수 있어요.";
 
+  elements.studentView.classList.toggle("question-mode", hasQuestion && !submitted);
+  elements.studentView.classList.toggle("result-mode", hasQuestion && submitted);
   elements.stage.classList.toggle("hidden", hasQuestion && submitted);
   elements.resultsPanel.classList.toggle("hidden", !hasQuestion || !submitted);
-  elements.studentNicknameBar.classList.toggle("hidden", !hasQuestion || !needsNickname);
+  elements.studentNicknameBar.classList.toggle("hidden", !hasQuestion);
   elements.answerForm.classList.toggle("hidden", !hasQuestion || submitted);
-  elements.submittedCard.classList.add("hidden");
+  elements.submittedCard.classList.toggle("hidden", !hasQuestion || !submitted);
   elements.nicknameField.classList.add("hidden");
   elements.choiceBox.classList.toggle("hidden", question?.type !== "multiple");
   elements.textField.classList.toggle("hidden", question?.type === "multiple" || !hasQuestion);
+
+  if (isStudentRoute && !savedNickname) {
+    showNicknameModal();
+  } else {
+    hideNicknameModal();
+  }
 
   elements.choiceBox.innerHTML = "";
   if (question?.type === "multiple") {
@@ -277,8 +304,8 @@ elements.answerForm.addEventListener("submit", async (event) => {
   );
 
   if (!answer) return;
-  if (currentQuestion.type === "race" && !nickname) {
-    elements.nicknameInput.focus();
+  if (!nickname) {
+    showNicknameModal();
     return;
   }
 
@@ -291,7 +318,7 @@ elements.answerForm.addEventListener("submit", async (event) => {
     transaction.set(doc(responsesRef), {
       answer,
       normalizedAnswer: normalize(answer),
-      nickname: currentQuestion.type === "race" ? nickname : "",
+      nickname,
       questionVersion: currentQuestion.version,
       createdAt: serverTimestamp(),
     });
@@ -306,11 +333,21 @@ elements.answerForm.addEventListener("submit", async (event) => {
 elements.persistentNicknameInput.addEventListener("input", () => {
   const nickname = saveNickname(elements.persistentNicknameInput.value);
   elements.nicknameInput.value = nickname;
+  elements.modalNicknameInput.value = nickname;
 });
 
 elements.nicknameInput.addEventListener("input", () => {
   const nickname = saveNickname(elements.nicknameInput.value);
   elements.persistentNicknameInput.value = nickname;
+  elements.modalNicknameInput.value = nickname;
+});
+
+elements.nicknameForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+  const nickname = saveNickname(elements.modalNicknameInput.value);
+  if (!nickname) return;
+  syncNicknameInputs(nickname);
+  hideNicknameModal();
 });
 
 elements.loginForm.addEventListener("submit", async (event) => {

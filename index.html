@@ -42,12 +42,9 @@
 
             <button class="primary" type="submit">제출</button>
           </form>
-
-          <div id="submittedCard" class="submitted hidden">
-            <strong>제출 완료</strong>
-            <span>질문이 바뀌면 다시 참여할 수 있어요.</span>
-          </div>
         </div>
+
+        <div id="submittedCard" class="submitted hidden">제출 완료</div>
 
         <aside id="resultsPanel" class="results-panel hidden">
           <div class="panel-head">
@@ -112,6 +109,18 @@
           </section>
         </div>
       </section>
+
+      <div id="nicknameModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="nicknameModalTitle">
+        <form id="nicknameForm" class="modal-box">
+          <p class="eyebrow">참여 준비</p>
+          <h2 id="nicknameModalTitle">닉네임을 먼저 정해주세요</h2>
+          <div class="field">
+            <label for="modalNicknameInput">닉네임</label>
+            <input id="modalNicknameInput" maxlength="24" autocomplete="nickname" placeholder="예: 민준" required />
+          </div>
+          <button class="primary" type="submit">시작하기</button>
+        </form>
+      </div>
     </main>
 
     <script type="module" src="./app.js"></script>
