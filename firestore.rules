@@ -1,0 +1,36 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.uid in [
+          "REPLACE_WITH_YOUR_ADMIN_UID"
+        ];
+    }
+
+    match /rooms/{roomId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+
+      match /responses/{responseId} {
+        allow read: if true;
+        allow create: if request.resource.data.keys().hasOnly([
+            "answer",
+            "normalizedAnswer",
+            "nickname",
+            "questionVersion",
+            "createdAt"
+          ])
+          && request.resource.data.answer is string
+          && request.resource.data.answer.size() > 0
+          && request.resource.data.answer.size() <= 120
+          && request.resource.data.questionVersion is string
+          && request.resource.data.questionVersion == get(/databases/$(database)/documents/rooms/$(roomId)).data.version
+          && request.resource.data.createdAt == request.time;
+        allow update: if false;
+        allow delete: if isAdmin();
+      }
+    }
+  }
+}

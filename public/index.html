@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Free Mentimeter</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <a class="brand" href="#/">Free Mentimeter</a>
+        <nav class="nav">
+          <a href="#/">학생</a>
+          <a href="#/admin">관리자</a>
+        </nav>
+      </header>
+
+      <section id="studentView" class="view">
+        <div class="stage">
+          <p class="eyebrow">실시간 참여</p>
+          <h1 id="studentQuestion">질문을 불러오는 중...</h1>
+          <p id="studentHint" class="hint">선생님이 질문을 열면 여기에 표시됩니다.</p>
+
+          <form id="answerForm" class="answer-form hidden">
+            <div id="nicknameField" class="field hidden">
+              <label for="nicknameInput">닉네임</label>
+              <input id="nicknameInput" maxlength="24" autocomplete="nickname" placeholder="예: 민준" />
+            </div>
+
+            <div id="choiceBox" class="choice-grid hidden"></div>
+
+            <div id="textField" class="field hidden">
+              <label for="answerInput">답변</label>
+              <textarea id="answerInput" maxlength="120" placeholder="짧게 적어주세요"></textarea>
+            </div>
+
+            <button class="primary" type="submit">제출</button>
+          </form>
+
+          <div id="submittedCard" class="submitted hidden">
+            <strong>제출 완료</strong>
+            <span>질문이 바뀌면 다시 참여할 수 있어요.</span>
+          </div>
+        </div>
+
+        <aside class="results-panel">
+          <div class="panel-head">
+            <span>응답 현황</span>
+            <strong id="responseCount">0</strong>
+          </div>
+          <div id="resultBoard" class="result-board"></div>
+        </aside>
+      </section>
+
+      <section id="adminView" class="view hidden">
+        <div class="admin-layout">
+          <section class="admin-panel">
+            <div class="panel-head">
+              <span>관리자</span>
+              <button id="logoutButton" class="secondary hidden" type="button">로그아웃</button>
+            </div>
+            <p id="adminStatus" class="hint">질문 관리는 관리자 계정으로 로그인해야 합니다.</p>
+
+            <form id="loginForm" class="login-form">
+              <div class="field">
+                <label for="adminIdInput">아이디</label>
+                <input id="adminIdInput" type="email" autocomplete="username" placeholder="admin@example.com" required />
+              </div>
+              <div class="field">
+                <label for="adminPasswordInput">비밀번호</label>
+                <input id="adminPasswordInput" type="password" autocomplete="current-password" placeholder="비밀번호" required />
+              </div>
+              <button class="primary" type="submit">관리자 로그인</button>
+            </form>
+
+            <form id="questionForm" class="admin-form hidden">
+              <div class="field">
+                <label for="questionInput">질문</label>
+                <textarea id="questionInput" maxlength="180" required placeholder="학생들에게 보여줄 질문"></textarea>
+              </div>
+
+              <div class="field">
+                <label for="typeInput">질문 유형</label>
+                <select id="typeInput">
+                  <option value="multiple">객관식</option>
+                  <option value="text">주관식</option>
+                  <option value="race">타임어택 주관식</option>
+                </select>
+              </div>
+
+              <div id="optionsField" class="field">
+                <label for="optionsInput">객관식 보기</label>
+                <textarea id="optionsInput" placeholder="한 줄에 보기 하나씩 입력"></textarea>
+              </div>
+
+              <button class="primary" type="submit">질문 열기 및 답변 초기화</button>
+            </form>
+          </section>
+
+          <section class="admin-panel">
+            <div class="panel-head">
+              <span>실시간 결과</span>
+              <strong id="adminResponseCount">0</strong>
+            </div>
+            <div id="adminResults" class="result-board"></div>
+          </section>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
