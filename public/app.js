@@ -1,10 +1,10 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import {
   getAuth,
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-auth.js";
 import {
   collection,
   deleteDoc,
@@ -18,15 +18,16 @@ import {
   runTransaction,
   serverTimestamp,
   setDoc,
-} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT_ID.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID",
+  apiKey: "AIzaSyCW4AqIJ9fcGMwXFcfLXtSJMIu-9-ocATo",
+  authDomain: "freementimeter.firebaseapp.com",
+  projectId: "freementimeter",
+  storageBucket: "freementimeter.firebasestorage.app",
+  messagingSenderId: "185602737175",
+  appId: "1:185602737175:web:3ff2632c2c1c4fa845c852",
+  measurementId: "G-KHSN4WNMQK",
 };
 
 const app = initializeApp(firebaseConfig);
