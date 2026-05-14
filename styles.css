@@ -82,6 +82,29 @@ textarea {
   align-items: start;
 }
 
+.nickname-bar {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto minmax(180px, 320px);
+  gap: 12px;
+  align-items: center;
+  justify-content: end;
+  position: sticky;
+  top: 84px;
+  z-index: 8;
+  margin-bottom: -12px;
+}
+
+.nickname-bar label {
+  color: #69645d;
+  font-size: 0.9rem;
+}
+
+.nickname-bar input {
+  min-height: 44px;
+  padding: 10px 12px;
+}
+
 .stage {
   min-height: calc(100vh - 164px);
   display: flex;
@@ -233,6 +256,12 @@ textarea:focus {
   top: 92px;
 }
 
+#studentView > .results-panel:not(.hidden) {
+  grid-column: 1 / -1;
+  position: static;
+  min-height: calc(100vh - 164px);
+}
+
 .panel-head {
   display: flex;
   align-items: center;
@@ -350,5 +379,12 @@ textarea:focus {
 
   .choice-grid {
     grid-template-columns: 1fr;
+  }
+
+  .nickname-bar {
+    grid-template-columns: 1fr;
+    justify-content: stretch;
+    position: static;
+    margin-bottom: 0;
   }
 }

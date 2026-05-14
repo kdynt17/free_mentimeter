@@ -36,12 +36,16 @@ const db = getFirestore(app);
 
 const stateRef = doc(db, "rooms", "default");
 const responsesRef = collection(db, "rooms", "default", "responses");
+const nicknameKey = "free-mentimeter-nickname";
 
 const $ = (selector) => document.querySelector(selector);
 
 const elements = {
   studentView: $("#studentView"),
   adminView: $("#adminView"),
+  studentNicknameBar: $("#studentNicknameBar"),
+  persistentNicknameInput: $("#persistentNicknameInput"),
+  stage: $(".stage"),
   studentQuestion: $("#studentQuestion"),
   studentHint: $("#studentHint"),
   answerForm: $("#answerForm"),
@@ -51,6 +55,7 @@ const elements = {
   textField: $("#textField"),
   answerInput: $("#answerInput"),
   submittedCard: $("#submittedCard"),
+  resultsPanel: $("#resultsPanel"),
   responseCount: $("#responseCount"),
   resultBoard: $("#resultBoard"),
   loginForm: $("#loginForm"),
@@ -94,9 +99,36 @@ function markSubmitted() {
   if (key) localStorage.setItem(key, "1");
 }
 
+function getSavedNickname() {
+  return localStorage.getItem(nicknameKey) || "";
+}
+
+function saveNickname(value) {
+  const nickname = value.trim();
+  if (nickname) {
+    localStorage.setItem(nicknameKey, nickname);
+  } else {
+    localStorage.removeItem(nicknameKey);
+  }
+  return nickname;
+}
+
+function syncNicknameInputs(value = getSavedNickname()) {
+  if (document.activeElement !== elements.persistentNicknameInput) {
+    elements.persistentNicknameInput.value = value;
+  }
+  if (document.activeElement !== elements.nicknameInput) {
+    elements.nicknameInput.value = value;
+  }
+}
+
 function renderStudentQuestion() {
   const question = currentQuestion;
   const hasQuestion = Boolean(question?.text);
+  const submitted = hasSubmitted();
+  const needsNickname = question?.type === "race";
+
+  syncNicknameInputs();
 
   elements.studentQuestion.textContent = hasQuestion ? question.text : "아직 열린 질문이 없습니다";
   elements.studentHint.textContent = hasQuestion
@@ -105,9 +137,12 @@ function renderStudentQuestion() {
       : "한 번 제출하면 질문이 바뀔 때까지 다시 제출할 수 없습니다."
     : "관리자가 질문을 열면 바로 참여할 수 있어요.";
 
-  elements.answerForm.classList.toggle("hidden", !hasQuestion || hasSubmitted());
-  elements.submittedCard.classList.toggle("hidden", !hasQuestion || !hasSubmitted());
-  elements.nicknameField.classList.toggle("hidden", question?.type !== "race");
+  elements.stage.classList.toggle("hidden", hasQuestion && submitted);
+  elements.resultsPanel.classList.toggle("hidden", !hasQuestion || !submitted);
+  elements.studentNicknameBar.classList.toggle("hidden", !hasQuestion || !needsNickname);
+  elements.answerForm.classList.toggle("hidden", !hasQuestion || submitted);
+  elements.submittedCard.classList.add("hidden");
+  elements.nicknameField.classList.add("hidden");
   elements.choiceBox.classList.toggle("hidden", question?.type !== "multiple");
   elements.textField.classList.toggle("hidden", question?.type === "multiple" || !hasQuestion);
 
@@ -237,7 +272,9 @@ elements.answerForm.addEventListener("submit", async (event) => {
   const selectedChoice = formData.get("choice");
   const answer =
     currentQuestion.type === "multiple" ? selectedChoice : elements.answerInput.value.trim();
-  const nickname = elements.nicknameInput.value.trim();
+  const nickname = saveNickname(
+    elements.persistentNicknameInput.value || elements.nicknameInput.value,
+  );
 
   if (!answer) return;
   if (currentQuestion.type === "race" && !nickname) {
@@ -261,8 +298,19 @@ elements.answerForm.addEventListener("submit", async (event) => {
   });
 
   elements.answerForm.reset();
+  syncNicknameInputs(nickname);
   markSubmitted();
   renderStudentQuestion();
+});
+
+elements.persistentNicknameInput.addEventListener("input", () => {
+  const nickname = saveNickname(elements.persistentNicknameInput.value);
+  elements.nicknameInput.value = nickname;
+});
+
+elements.nicknameInput.addEventListener("input", () => {
+  const nickname = saveNickname(elements.nicknameInput.value);
+  elements.persistentNicknameInput.value = nickname;
 });
 
 elements.loginForm.addEventListener("submit", async (event) => {
