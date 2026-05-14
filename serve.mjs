@@ -3,7 +3,7 @@ import { createReadStream, existsSync } from "node:fs";
 import { extname, join, normalize } from "node:path";
 
 const port = Number(process.env.PORT || 4173);
-const root = join(process.cwd(), "public");
+const root = process.cwd();
 
 const types = {
   ".html": "text/html; charset=utf-8",
@@ -16,7 +16,7 @@ createServer((request, response) => {
   const requested = normalize(url.pathname === "/" ? "/index.html" : url.pathname);
   const filePath = join(root, requested);
 
-  if (!filePath.startsWith(root) || !existsSync(filePath)) {
+  if (!filePath.startsWith(root) || requested.includes("/.") || !existsSync(filePath)) {
     response.writeHead(404);
     response.end("Not found");
     return;

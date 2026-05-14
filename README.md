@@ -20,7 +20,7 @@ Firebase 기반 1회용 수업용 실시간 응답 서비스입니다.
 
 ## 로컬 실행
 
-정적 파일만으로 구성되어 있어 `public/index.html`을 브라우저로 열 수 있습니다.
+정적 파일만으로 구성되어 있어 `index.html`을 브라우저로 열 수 있습니다.
 Firebase Auth 팝업은 배포 도메인이나 허용된 로컬 도메인에서 가장 안정적으로 동작합니다.
 
 간단한 로컬 서버:
@@ -37,3 +37,7 @@ Firebase CLI가 설치되어 있다면 다음 순서로 배포합니다.
 firebase login
 firebase deploy
 ```
+
+## GitHub Pages
+
+GitHub Pages를 쓰려면 Repository Settings → Pages에서 Source를 `Deploy from a branch`, Branch를 `main`, Folder를 `/ (root)`로 선택합니다.
